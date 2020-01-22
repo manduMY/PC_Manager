@@ -49,7 +49,7 @@ public class CusManager extends JFrame {
 
 	public boolean loginFlag = false;
 	public String id = "관리자";
-
+	
 	private CusManager() {
 		super("고객관리");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
