@@ -97,21 +97,31 @@ public class CusManager extends JFrame {
 	}
 
 	public class SeatPanel extends JPanel {
-		JButton[] seatBtn = new JButton[12];
+		public JButton[] seatBtn = new JButton[12];
 		public JTextArea[] seatTextArea = new JTextArea[12];
+		JPanel[] backPanel = new JPanel[12];
+		JScrollPane[] jscroll = new JScrollPane[12];
 
 		public SeatPanel() {
 			setLayout(new GridLayout(3, 4, 10, 10));
 			for (int i = 0; i < seatBtn.length; i++) {
 
-//				seatLabel[i].setPreferredSize(new Dimension((int) (100), (int) (120))); //
-				add(seatBtn[i] = new JButton(""));
-				seatBtn[i].add(seatTextArea[i] = new JTextArea("빈 자 리\n",12,20));
-				seatBtn[i].setPreferredSize(new Dimension((int) (100), (int) (120))); //
-				seatBtn[i].setBackground(new Color(255, 255, 255));
-				seatBtn[i].setFont(new Font("고딕체", Font.BOLD, 16));
-				seatBtn[i].setForeground(Color.BLACK);
+				add(backPanel[i] = new JPanel());
+				backPanel[i].setPreferredSize(new Dimension((int) (100), (int) (127)));
+				backPanel[i].setOpaque(false);
+				backPanel[i].add(jscroll[i] = new JScrollPane(seatTextArea[i] = new JTextArea(" 빈 자 리\n", 9, 10)));
+				jscroll[i].getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
+				jscroll[i].getHorizontalScrollBar().setPreferredSize(new Dimension(0, 0));
 
+				seatTextArea[i].setEditable(false); // JTextArea를 수정할 수 없게한다.
+				seatTextArea[i].setOpaque(true);
+				seatTextArea[i].setHighlighter(null); // JTextArea안의 글씨가 선택 되는걸 막기 위해
+				seatTextArea[i].setBackground(new Color(255, 255, 255));
+
+				seatTextArea[i].add(seatBtn[i] = new JButton());
+				seatBtn[i].setSize(100, 120);
+				seatBtn[i].setBackground(new Color(255, 255, 255));
+				seatBtn[i].setOpaque(false);
 			}
 		}
 	}// SeatPanel
@@ -163,5 +173,8 @@ public class CusManager extends JFrame {
 		chatInput.addActionListener(listener);
 		previousBtn.addActionListener(listener);
 		logoutBtn.addActionListener(listener);
+		for (int i = 0; i < 12; i++) {
+			SP.seatBtn[i].addActionListener(listener);
+		}
 	}
 }

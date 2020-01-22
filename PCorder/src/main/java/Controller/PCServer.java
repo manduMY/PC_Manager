@@ -199,7 +199,7 @@ public class PCServer {
       int[] cnt = new int[12];
       for (ChatThread ct : chatThreads) {
          if (!ct.m.getId().equals("관리자")) {
-            if (!ct.m.getId().equals("0"))
+            if (!ct.m.getSeat().equals("0"))
                cnt[Integer.parseInt(ct.m.getSeat()) - 1] = Integer.parseInt(ct.m.getSeat());
          }
       }
