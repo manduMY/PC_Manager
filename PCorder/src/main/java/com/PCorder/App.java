@@ -12,6 +12,7 @@ import View.AdminView;
 import View.CusManager;
 import View.GUIView;
 import View.LoginView;
+import View.OrderList;
 import View.ProdManager;
 import View.SignUpView;
 
@@ -32,7 +33,7 @@ public class App
 				
 		//컨트롤러 객체 생성
 		app = new PCController	(
-								LoginView.getInstance(), CusManager.getInstance(), 
+								LoginView.getInstance(), CusManager.getInstance(), OrderList.getInstance(),
 								ProdManager.getInstance(), GUIView.getInstance(),
 								new AdminView(), new SignUpView(), 
 								new C_login(), new C_SignUp(), 

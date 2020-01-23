@@ -29,12 +29,14 @@ import View.AdminView;
 import View.CusManager;
 import View.GUIView;
 import View.LoginView;
+import View.OrderList;
 import View.ProdManager;
 import View.SignUpView;
 
 public class PCController implements Runnable {
    public final LoginView LV;
    public final CusManager CM;
+   public final OrderList OL;
    public final ProdManager PM;
    public final GUIView GUI;
    public final AdminView AV;
@@ -71,7 +73,7 @@ public class PCController implements Runnable {
    
    HashMap<String, String> current_temp;
 
-   public PCController(LoginView LV, CusManager CM, ProdManager PM, GUIView GUI, AdminView AV, SignUpView SUV,
+   public PCController(LoginView LV, CusManager CM, OrderList OL, ProdManager PM, GUIView GUI, AdminView AV, SignUpView SUV,
          C_login cl, C_SignUp cs, C_ProdManager cp, C_UserView cu, C_AdminView ca, PCChatData CMchatData,
          PCChatData GUIchatData) {
       // 로거 객체 초기화
@@ -79,6 +81,7 @@ public class PCController implements Runnable {
 
       this.LV = LV; // LoginView 참조객체 연결
       this.CM = CM; // CusManager 참조객체 연결
+      this.OL = OL;
       this.PM = PM; // ProdManager 참조객체 연결
       this.GUI = GUI; // GUIView 참조객체 연결
       this.AV = AV; // AdminView 참조객체 연결
@@ -202,7 +205,6 @@ public class PCController implements Runnable {
             Object obj = e.getSource();
             if (obj == CM.chatInput) { // 고객관리 뷰에서 채팅
                if (CM.chatComboBox.getSelectedIndex() == 0) {
-                  System.out.println("qq " + CM.chatComboBox.getSelectedIndex());
                   outMsg.println(
                         gson.toJson(new Message("카운터", CM.id, "", CM.chatInput.getText(), "ModeAll", "")));
                   CM.chatInput.setText("");
@@ -241,11 +243,39 @@ public class PCController implements Runnable {
                 }
                 status = false;
             } else {
+            	for(int i=0; i<12; i++) {
+            		if(obj == CM.SP.seatBtn[i]) {
+            			OL.setVisible(true);
+            			OL.selectSeat = i;
+            			String orderStr = CM.SP.seatTextArea[i].getText();
+                        String order_list_split[] = orderStr.split("\n");
+                        
+                        OL.orderID.setText(order_list_split[0]);
+                        
+                        
+                        for(int j=1;i<order_list_split.length;j++) {
+                        	if(j==1) OL.orderList_ta.setText("");
+                        	OL.orderList_ta.append(order_list_split[j] + "\n");
+                        }
+            		}
+            	}
 
             }
          }
       });
-
+      // 주문 목록 이벤트 처리
+      OL.addButtonActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+             Object obj = e.getSource();
+             if (obj == OL.serviceBtn) {
+            	 CM.SP.seatTextArea[OL.selectSeat].setText(OL.orderID.getText() + "\n");
+             	 OL.setVisible(false);
+             } else if (obj == OL.closeBtn) {
+                 OL.setVisible(false);
+             }
+          }
+       });
       // 상품 관리 이벤트 처리
       PM.addButtonActionListener(new ActionListener() {
          @Override
