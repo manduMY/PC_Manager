@@ -251,11 +251,13 @@ public class PCController implements Runnable {
                         String order_list_split[] = orderStr.split("\n");
                         
                         OL.orderID.setText(order_list_split[0]);
-                        
-                        
-                        for(int j=1;i<order_list_split.length;j++) {
-                        	if(j==1) OL.orderList_ta.setText("");
-                        	OL.orderList_ta.append(order_list_split[j] + "\n");
+//                        System.out.println("length가 얼마야?" + order_list_split.length);
+                        if(order_list_split.length > 1) { // 만약 빈 자 리 상태에서 split으로 쪼개면 length는 1이므로 length가 2이상일 때 주문 목록이 있어야하니 이런식으로 예외처리를 해준다.
+	                        for(int j=1;j<order_list_split.length;j++) {
+	                        	if(j==1) OL.orderList_ta.setText("");
+//	                        	System.out.println("???"+order_list_split[j]);
+	                        	OL.orderList_ta.append(order_list_split[j] + "\n");
+	                        }
                         }
             		}
             	}
@@ -270,6 +272,12 @@ public class PCController implements Runnable {
              Object obj = e.getSource();
              if (obj == OL.serviceBtn) {
             	 CM.SP.seatTextArea[OL.selectSeat].setText(OL.orderID.getText() + "\n");
+            	 
+            	 String splitID[] = OL.orderID.getText().split(":");
+//            	 System.out.println("length:" + splitID.length);
+            	 if(splitID.length > 1) { // 만약 빈 자 리 상태에서 split으로 쪼개면 length는 1이므로 length가 2이상일 때 주문 목록이 있어야하니 이런식으로 예외처리를 해준다.
+            		 outMsg.println(gson.toJson(new Message(splitID[0], splitID[1], "", "", "completionServiceServer", "adminlogin")));
+            	 }
              	 OL.setVisible(false);
              } else if (obj == OL.closeBtn) {
                  OL.setVisible(false);
@@ -396,8 +404,8 @@ public class PCController implements Runnable {
          try {
             // 메시지 수신 및 파싱
             msg = inMsg.readLine();
-            System.out.println(msg);
             Message m_temp = gson.fromJson(msg, Message.class);
+            System.out.println(msg);
             if(m_temp.getType().equals("current_count") && m.getId().equals("관리자"))
             {
                /*관리자로 로그인시에 현재 접속중인 사용자들의 좌석과 아이디를 콤보박스에 최신화 합니다.*/
@@ -421,16 +429,15 @@ public class PCController implements Runnable {
                }
              }
             if(m_temp.getType().equals("fromServer_order")) {
-               /*주문한 유저의 좌석에 주문 정보를 뿌려 줍니다.*/
                String orderList = "";
                orderList = gson.fromJson(m_temp.getReceiveId(), String.class);
                CM.SP.seatTextArea[(Integer.parseInt((String)m_temp.getSeat())-1)].append(orderList);
             }
-            if(m_temp.getType().equals("user_login") &&m.getId().equals("관리자"))
+            if(m_temp.getType().equals("user_login"))
             {
                /*사용자 로그인시에 콤보박스에 방금 접속한 사용자의 좌석과 아이디를 추가합니다.*/
                String value = m_temp.getSeat()+":"+m_temp.getId();
-               current_temp.put(m_temp.getId(),m_temp.getSeat());
+//               current_temp.put(m_temp.getId(),m_temp.getSeat());
                CM.chatComboBox.addItem(value);
                /*고객 관리창 좌석에 방금 점속한 사용자의 좌석과 아이디를 뿌려 줍니다.*/
                int seat = Integer.parseInt(m_temp.getSeat())-1;
@@ -438,12 +445,14 @@ public class PCController implements Runnable {
                   if(Integer.toString(i).equals(Integer.toString(seat)))
                      CM.SP.seatTextArea[i].setText(m_temp.getSeat() + ":" + m_temp.getId() + "\n");
                }
+//               System.out.println("들어:"+m_temp.getSeat() + "\n 다른거:" + GUI.id + "\n" + m_temp.getId() + "\n" + GUI.seat );
             }
             if(m_temp.getType().equals("user_logout"))
             {
                /*사용자 로그아웃시 콤보박스에 나간 사용자를 지우고 콤보박스를 최신화 합니다.*/
                int[] customersSeat = new int[12];
                customersSeat = gson.fromJson(m_temp.getReceiveId(), int[].class);
+               
                CM.chatComboBox.removeAllItems();
                CM.chatComboBox.addItem("전체");
                for(int i=0;i<12;i++) {
@@ -460,6 +469,12 @@ public class PCController implements Runnable {
                   }
                }
             }
+//            if(m_temp.getType().equals("serviceComplete"))
+//            {
+//               /*서비스가 완료되면 고객 관리창의 주문목록을 초기화 합니다.*/
+//            	CM.SP.seatTextArea[Integer.parseInt(m_temp.getSeat())-1].setText(m_temp.getSeat() + ":" + m_temp.getId() + "\n");
+//              
+//            }
             if(m.getSeat() == "0" && GUI.seat == "") {
                /*사용자가 들어갈 좌석에 사용자가 없거나 맨 처음 사용자가 들어오는 상태이면 좌석 정보를 채워 놓습니다.*/
                /*나중에 사용자 좌석 정보를 사용자 로그인시와 로그아웃시 이용하기 위함입니다.*/

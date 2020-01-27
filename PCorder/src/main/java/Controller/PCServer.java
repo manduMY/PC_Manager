@@ -95,20 +95,25 @@ public class PCServer {
             while (status) {
                msg = inMsg.readLine();
                m = gson.fromJson(msg, Message.class);
+               System.out.println(msg);
                if (m.getType().equals("logout")) {
                  /*로그아웃한 클라이언트의 스레드를 지우고 좌석정보를 메시지로 보냅니다.*/
                   chatThreads.remove(this);
-                  int[] customerSeat = new int[12];
-                  customerSeat = SeatCustomer();
-                  msgSendToAdmin(gson.toJson(new Message(m.getSeat(), m.getId(), "", "님이 종료했습니다.", "user_logout", gson.toJson(customerSeat))));
-                  seatNum[Integer.parseInt(m.getSeat())] = 0; // 로그아웃한 좌석을 0으로 초기화하여 빈자리 상태로 만들기 위함입니다.
+//                  int[] customerSeat = new int[12];
+//                  customerSeat = SeatCustomer();
+                  seatNum[Integer.parseInt(m.getSeat())-1] = 0; // 로그아웃한 좌석을 0으로 초기화하여 빈자리 상태로 만들기 위함입니다.
+//                  int[] customerSeat = new int[12];
+//                  for(int i=0;i<12;i++) {
+//                	  customerSeat[i] = seatNum[i];
+//                  }
+                  msgSendToAdmin(gson.toJson(new Message(m.getSeat(), m.getId(), "", "님이 종료했습니다.", "user_logout", gson.toJson(seatNum))));
                   status = false;
                } else if (m.getType().equals("login")) {
                  /*로그인시에 앞에 자리부터 비교하여 자리가 비어있으면 처음 만난 빈자리에 로그인 합니다.*/
                   int i = 0;
-                  for(i=1; i<=12; i++) {
+                  for(i=0; i<12; i++) {
                      if(seatNum[i] == 0) {
-                        seatNum[i] = i;
+                        seatNum[i] = i+1;
                         break;
                      }
                   }
@@ -146,10 +151,15 @@ public class PCServer {
                      str += PCorder_list.get(i).getpNAME() + " " + PCorder_list.get(i).getoCNT() + "개\n";
                   }
                }
-               int[] customerSeat = new int[12];
-               customerSeat = SeatCustomer();
-               orderSendToAdmin(gson.toJson(new Message(m.getSeat(), m.getId(), "",m.getMsg(), "fromServer_order", gson.toJson(str)))); //주문 정보를 관리자 채팅창에 띄워주기 위해 메시지를 보냅니다.
-            } else {
+               onlySendToAdmin(gson.toJson(new Message(m.getSeat(), m.getId(), "",m.getMsg(), "fromServer_order", gson.toJson(str)))); //주문 정보를 관리자 채팅창에 띄워주기 위해 메시지를 보냅니다.
+            } else if (m.getType().equals("completionServiceServer")) {
+            	o_dao.getInstance().ORDERS_LIST_DELETE(m.getId());
+//            	System.out.println("넘어간거야?");
+//            	onlySendToAdmin(gson.toJson(new Message(m.getSeat(), m.getId(), "",m.getMsg(), "serviceComplete", ""))); //주문 정보를 관리자 채팅창에 띄워주기 위해 메시지를 보냅니다.
+//            	foodServiceSend(gson.toJson(new Message(m.getSeat(), m.getId(), "","에게 서비스 완료", "serviceComplete", "")));
+//            	System.out.println("간다잇");
+//            	System.out.println("출력 값: " + m.getReceiveId());
+            }else {
 
             }
             }
@@ -161,8 +171,15 @@ public class PCServer {
             logger.info(this.getName() + " 종료됨!!");
          }
       }
-      
-      void orderSendToAdmin(String msg) {
+      void foodServiceSend(String msg) {
+          /*음식 서비스를 고객에게 가져다 주면 메세지를 띄웁니다.*/
+           for (ChatThread ct : chatThreads) {
+              if (ct.m.getId().equals("관리자")) {
+                 ct.outMsg.println(msg);
+              }
+           }
+        }
+      void onlySendToAdmin(String msg) {
          /*주문 정보를 관리자 채팅창에 띄워주기 위한 메소드 입니다.*/
          for (ChatThread ct : chatThreads) {
             if (ct.m.getId().equals("관리자")) {
@@ -198,9 +215,8 @@ public class PCServer {
       /*좌석 정보를 알려주기 위한 메소드 입니다.*/
       int[] cnt = new int[12];
       for (ChatThread ct : chatThreads) {
-         if (!ct.m.getId().equals("관리자")) {
-            if (!ct.m.getSeat().equals("0"))
-               cnt[Integer.parseInt(ct.m.getSeat()) - 1] = Integer.parseInt(ct.m.getSeat());
+         if (!ct.m.getSeat().equals("카운터")) {
+            if(!ct.m.getSeat().equals("0")) cnt[Integer.parseInt(ct.m.getSeat()) - 1] = Integer.parseInt(ct.m.getSeat());
          }
       }
       return cnt;

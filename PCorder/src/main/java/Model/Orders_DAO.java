@@ -11,6 +11,8 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
+
 import Controller.PCController;
 import Controller.PCServer;
 import View.GUIView;
@@ -132,6 +134,38 @@ public class Orders_DAO implements DAO_Interface{
 			if(r > 0) {}
 			else {}
 		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			Orders_DAO.closeJDBC(conn, pstmt, pstmt, rs);
+		}
+		
+		return;
+	}
+	public void ORDERS_LIST_DELETE(String cNAME) {
+		String sql = "DELETE FROM ORDERS WHERE ORDERS.cNAME = ?";
+		try {
+			conn = getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, cNAME);
+			int r = pstmt.executeUpdate();
+			
+			stmt = conn.createStatement();
+			stmt.executeUpdate("SET @CNT = 0");
+			stmt = conn.createStatement();
+			stmt.executeUpdate("UPDATE ORDERS SET ORDERS.oID = @CNT:=@CNT+1");
+			
+			if(r > 0) {
+//				PM.stateText.setText("## 메시지 : 해당 제품의 삭제가 정상적으로 처리되었습니다.");
+			}
+			else {
+//				PM.stateText.setText("## 메시지 : 해당 제품을 삭제하는데 실패했습니다.");
+			}
+			
+		} catch(MySQLIntegrityConstraintViolationException e3){
+//			PM.stateText.setText("## 메시지 : 이 상품을 주문한 고객이 있어 상품을 삭제할 수 없습니다.");
+		}catch(SQLException e1) {
+			e1.printStackTrace();
+		}catch(Exception e) {
 			e.printStackTrace();
 		} finally {
 			Orders_DAO.closeJDBC(conn, pstmt, pstmt, rs);

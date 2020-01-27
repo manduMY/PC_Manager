@@ -26,7 +26,7 @@ public class OrderList extends JFrame {
 	public static OrderList getInstance() {
 		return OL;
 	}
-	OrderList() {
+	private OrderList() {
 		setTitle("주문 목록");
 		Container c = getContentPane();
 		

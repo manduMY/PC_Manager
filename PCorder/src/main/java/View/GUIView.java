@@ -86,7 +86,7 @@ public class GUIView extends JFrame {
 	public JTextField msgInput = new JTextField();
 	public String id;
 	public String pointLabel;
-	public String seat="";
+	public String seat = "";
 
 	private static String getTagValue(String tag, Element eElement) {
 		NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();

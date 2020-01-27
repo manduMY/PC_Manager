@@ -66,7 +66,7 @@ public class Message {
    }
    @Override
    public String toString() {
-      return "Message [id=" + id + ", password=" + password + ", type=" + type + ", msg=" + msg + "]";
+      return "Message [seat=" + seat + ", id=" + id + ", password=" + password + ", type=" + type + ", msg=" + msg + ", receveId=" + receiveId + "]";
    }
    
    
