@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
@@ -20,6 +21,7 @@ import javax.swing.JButton;
 
 import com.google.gson.Gson;
 
+import Controller.PCServer.ChatThread;
 import Model.Customers_DAO;
 import Model.Message;
 import Model.Orders_DAO;
@@ -203,26 +205,17 @@ public class PCController implements Runnable {
          @Override
          public void actionPerformed(ActionEvent e) {
             Object obj = e.getSource();
-            if (obj == CM.chatInput) { // 고객관리 뷰에서 채팅
+            if (obj == CM.chatInput || obj == CM.chatSubmit) { // 고객관리 뷰에서 채팅
                if (CM.chatComboBox.getSelectedIndex() == 0) {
                   outMsg.println(
-                        gson.toJson(new Message("카운터", CM.id, "", CM.chatInput.getText(), "ModeAll", "")));
+                        gson.toJson(new Message("카운터", "관리자", "", CM.chatInput.getText(), "ModeAll", "")));
                   CM.chatInput.setText("");
                } else {
-                  System.out.println("pp " + CM.chatComboBox.getSelectedIndex());
                   String str = CM.chatComboBox.getItemAt(CM.chatComboBox.getSelectedIndex());
-                  int index = 0;
-                  for (String key : current_temp.keySet()) {
-                     index++;
-                     String value = current_temp.get(key);
-                     String strTemp = value + ":" + key;
-                     if (strTemp.equals(str)) {
-                        outMsg.println(gson.toJson(
-                              new Message("카운터", CM.id, "", CM.chatInput.getText(), "ModeSelect", key)));
-                        CM.chatInput.setText("");
-                        break;
-                     }
-                  }
+                  String splitID[] = str.split(":");
+                  outMsg.println(gson.toJson(
+                          new Message("카운터", "관리자", "", CM.chatInput.getText(), "ModeSelect", splitID[1])));
+                  CM.chatInput.setText("");
                }
             } else if (obj == CM.previousBtn) { // 고객관리 뷰에서 이전 버튼을 눌렀을 경우
                CM.setVisible(false);
@@ -251,11 +244,9 @@ public class PCController implements Runnable {
                         String order_list_split[] = orderStr.split("\n");
                         
                         OL.orderID.setText(order_list_split[0]);
-//                        System.out.println("length가 얼마야?" + order_list_split.length);
                         if(order_list_split.length > 1) { // 만약 빈 자 리 상태에서 split으로 쪼개면 length는 1이므로 length가 2이상일 때 주문 목록이 있어야하니 이런식으로 예외처리를 해준다.
 	                        for(int j=1;j<order_list_split.length;j++) {
 	                        	if(j==1) OL.orderList_ta.setText("");
-//	                        	System.out.println("???"+order_list_split[j]);
 	                        	OL.orderList_ta.append(order_list_split[j] + "\n");
 	                        }
                         }
@@ -271,12 +262,13 @@ public class PCController implements Runnable {
           public void actionPerformed(ActionEvent e) {
              Object obj = e.getSource();
              if (obj == OL.serviceBtn) {
+            	 String productCnt[] = CM.SP.seatTextArea[OL.selectSeat].getText().split("\n");
             	 CM.SP.seatTextArea[OL.selectSeat].setText(OL.orderID.getText() + "\n");
-            	 
             	 String splitID[] = OL.orderID.getText().split(":");
-//            	 System.out.println("length:" + splitID.length);
-            	 if(splitID.length > 1) { // 만약 빈 자 리 상태에서 split으로 쪼개면 length는 1이므로 length가 2이상일 때 주문 목록이 있어야하니 이런식으로 예외처리를 해준다.
-            		 outMsg.println(gson.toJson(new Message(splitID[0], splitID[1], "", "", "completionServiceServer", "adminlogin")));
+            	 if(productCnt.length > 1) { // 만약 빈 자 리 상태에서 split으로 쪼개면 length는 1이므로 length가 2이상일 때 주문 목록이 있어야하니 이런식으로 예외처리를 해준다.
+            		 o_dao.getInstance().ORDERS_LIST_DELETE(splitID[1]);
+//            		 outMsg.println(gson.toJson(new Message(splitID[0], splitID[1], "", "", "completionServiceServer", "")));
+            		 outMsg.println(gson.toJson(new Message("카운터", "관리자", "", "고객님께 음식을 전달 하였습니다.", "orderListRemove", splitID[0] + ":" + splitID[1])));
             	 }
              	 OL.setVisible(false);
              } else if (obj == OL.closeBtn) {
@@ -445,7 +437,6 @@ public class PCController implements Runnable {
                   if(Integer.toString(i).equals(Integer.toString(seat)))
                      CM.SP.seatTextArea[i].setText(m_temp.getSeat() + ":" + m_temp.getId() + "\n");
                }
-//               System.out.println("들어:"+m_temp.getSeat() + "\n 다른거:" + GUI.id + "\n" + m_temp.getId() + "\n" + GUI.seat );
             }
             if(m_temp.getType().equals("user_logout"))
             {
@@ -466,22 +457,21 @@ public class PCController implements Runnable {
                   if(customersSeat[i] == 0) {
                      /*사용자 로그아웃시 좌석창에 나간 사용자 제외하고 좌석을 최신화 합니다.*/
                      CM.SP.seatTextArea[i].setText("빈 자 리\n");
+                     OL.orderList_ta.setText("");
                   }
                }
             }
-//            if(m_temp.getType().equals("serviceComplete"))
-//            {
-//               /*서비스가 완료되면 고객 관리창의 주문목록을 초기화 합니다.*/
-//            	CM.SP.seatTextArea[Integer.parseInt(m_temp.getSeat())-1].setText(m_temp.getSeat() + ":" + m_temp.getId() + "\n");
-//              
-//            }
+            if(m_temp.getType().equals("orderList_remove"))
+            {
+               /*서비스가 완료되면 고객 관리창의 주문목록을 초기화 합니다.*/
+            	order_list.clear();
+            }
             if(m.getSeat() == "0" && GUI.seat == "") {
                /*사용자가 들어갈 좌석에 사용자가 없거나 맨 처음 사용자가 들어오는 상태이면 좌석 정보를 채워 놓습니다.*/
                /*나중에 사용자 좌석 정보를 사용자 로그인시와 로그아웃시 이용하기 위함입니다.*/
                GUI.seat = m_temp.getSeat();
                m.setSeat(m_temp.getSeat());
             }
-            
             if(CM.loginFlag)
             {   
                // 관리자 창을 refresh 최신화 해줍니다.

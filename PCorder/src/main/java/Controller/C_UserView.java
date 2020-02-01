@@ -101,7 +101,6 @@ public class C_UserView implements I_UserView{
 		if(Customers_DAO.getInstance().Cash_Check(id, value)){
 			Order_Flag = true;
 			GU.mess.setText(LoginView.getInstance().loginTextField.getText() + "님, " + "결제가 되었습니다.");
-			System.out.println(point - value);
 			GU.la[2].setText("포인트 : " + Integer.toString(point-value));
 			
 			//-------------- (Controller\PCController.java)order_list 에 있는 모든 상품 목록들을 튜플에 삽입한다.

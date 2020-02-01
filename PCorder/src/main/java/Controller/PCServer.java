@@ -96,16 +96,11 @@ public class PCServer {
                msg = inMsg.readLine();
                m = gson.fromJson(msg, Message.class);
                System.out.println(msg);
+               all();
                if (m.getType().equals("logout")) {
                  /*로그아웃한 클라이언트의 스레드를 지우고 좌석정보를 메시지로 보냅니다.*/
                   chatThreads.remove(this);
-//                  int[] customerSeat = new int[12];
-//                  customerSeat = SeatCustomer();
                   seatNum[Integer.parseInt(m.getSeat())-1] = 0; // 로그아웃한 좌석을 0으로 초기화하여 빈자리 상태로 만들기 위함입니다.
-//                  int[] customerSeat = new int[12];
-//                  for(int i=0;i<12;i++) {
-//                	  customerSeat[i] = seatNum[i];
-//                  }
                   msgSendToAdmin(gson.toJson(new Message(m.getSeat(), m.getId(), "", "님이 종료했습니다.", "user_logout", gson.toJson(seatNum))));
                   status = false;
                } else if (m.getType().equals("login")) {
@@ -128,37 +123,34 @@ public class PCServer {
                } else if (m.getType().equals("sendtoadmin")) {
                  /*사용자가 관리자에게만 채팅을 하기 위한 메소드를 호출합니다.*/
                   msgSendToAdmin(msg);
-               } else if (m.getType().equals("admin")) {
-                  /*관리자가 사용자 전체에게 메세지를 보내기 위한 메소드를 호출합니다.*/
-                  msgSendAll(msg);
                } else if (m.getType().equals("adminlogout")) {
                   /*관리자의 스레드를 종료시킵니다.*/
                   chatThreads.remove(this);
                   status = false;
                } else if (m.getType().equals("ModeAll")) {
                  /*관리자가 전체 메세지 모드일때 사용자 모두에게 메세지를 보내는 메소드를 호출합니다.*/
+            	   System.out.println("ModeAll::");
+            	   all();
                   msgSendAll(msg);
                } else if (m.getType().equals("ModeSelect")) {
                  /*관리자가 지정한 사용자에게 메세지를 보내기 위한 메소드를 호출합니다.*/
+            	   System.out.println("ModeSelect::" + m.getReceiveId());
+            	   all();
                   msgSendToCustomer(msg);
                } else if (m.getType().equals("orderSendServer")){
+            	   all();
                   /*주문 정보를 최신화하여 좌석 정보창에 뿌려주기 위해 DB에 있는 주문 정보를 가져와 주문 정보를 메시지로 보냅니다.*/
                    o_dao.getInstance().ORDERS_FUNC_2();
-                  
                String str = "";
                for (int i = 0; i < PCorder_list.size(); i++) {
                   if(m.getId().equals(PCorder_list.get(i).getcNAME())) {
                      str += PCorder_list.get(i).getpNAME() + " " + PCorder_list.get(i).getoCNT() + "개\n";
                   }
                }
-               onlySendToAdmin(gson.toJson(new Message(m.getSeat(), m.getId(), "",m.getMsg(), "fromServer_order", gson.toJson(str)))); //주문 정보를 관리자 채팅창에 띄워주기 위해 메시지를 보냅니다.
-            } else if (m.getType().equals("completionServiceServer")) {
-            	o_dao.getInstance().ORDERS_LIST_DELETE(m.getId());
-//            	System.out.println("넘어간거야?");
-//            	onlySendToAdmin(gson.toJson(new Message(m.getSeat(), m.getId(), "",m.getMsg(), "serviceComplete", ""))); //주문 정보를 관리자 채팅창에 띄워주기 위해 메시지를 보냅니다.
-//            	foodServiceSend(gson.toJson(new Message(m.getSeat(), m.getId(), "","에게 서비스 완료", "serviceComplete", "")));
-//            	System.out.println("간다잇");
-//            	System.out.println("출력 값: " + m.getReceiveId());
+               orderSend(gson.toJson(new Message(m.getSeat(), m.getId(), "",m.getMsg(), "fromServer_order", gson.toJson(str)))); //주문 정보를 관리자 채팅창에 띄워주기 위해 메시지를 보냅니다.
+            } else if (m.getType().equals("orderListRemove")) {
+            	orderListCustomer(gson.toJson(new Message(m.getSeat(), m.getId(), "", m.getMsg(), "orderList_remove", "")));
+            	all();
             }else {
 
             }
@@ -171,16 +163,29 @@ public class PCServer {
             logger.info(this.getName() + " 종료됨!!");
          }
       }
-      void foodServiceSend(String msg) {
+      void all() {
           /*음식 서비스를 고객에게 가져다 주면 메세지를 띄웁니다.*/
-           for (ChatThread ct : chatThreads) {
-              if (ct.m.getId().equals("관리자")) {
-                 ct.outMsg.println(msg);
-              }
-           }
+          for (ChatThread ct : chatThreads) {
+//             if (ct.m.getId().equals(m.getId())) {
+//                ct.outMsg.println(msg);
+//             }
+        	  
+        	  System.out.println("쓰레드:" + ct.msg);
+          }
         }
-      void onlySendToAdmin(String msg) {
+      void orderListCustomer(String msg) {
+          /*음식 서비스를 고객에게 가져다 주면 메세지를 띄웁니다.*/
+    	  outMsg.println(msg);
+    	  String splitID[] = m.getReceiveId().split(":");
+          for (ChatThread ct : chatThreads) {
+             if (ct.m.getId().equals(splitID[1])) {
+            	ct.outMsg.println(msg);
+             }
+          }
+        }
+      void orderSend(String msg) {
          /*주문 정보를 관리자 채팅창에 띄워주기 위한 메소드 입니다.*/
+    	 outMsg.println(msg);
          for (ChatThread ct : chatThreads) {
             if (ct.m.getId().equals("관리자")) {
                ct.outMsg.println(msg);
@@ -211,16 +216,6 @@ public class PCServer {
             }
          }
       }
-   int[] SeatCustomer() {
-      /*좌석 정보를 알려주기 위한 메소드 입니다.*/
-      int[] cnt = new int[12];
-      for (ChatThread ct : chatThreads) {
-         if (!ct.m.getSeat().equals("카운터")) {
-            if(!ct.m.getSeat().equals("0")) cnt[Integer.parseInt(ct.m.getSeat()) - 1] = Integer.parseInt(ct.m.getSeat());
-         }
-      }
-      return cnt;
-   }
    }
    public static void main(String[] args) {
       PCServer server = new PCServer();

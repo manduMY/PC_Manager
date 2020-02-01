@@ -33,7 +33,7 @@ public class CusManager extends JFrame {
 	public JComboBox<String> chatComboBox = new JComboBox<String>();
 	public JTextArea chatContent = new JTextArea("", 12, 50);
 	public JTextField chatInput = new JTextField();
-	JButton chatSubmit = new JButton("send");
+	public JButton chatSubmit = new JButton("send");
 	JLabel order[];
 	TitledBorder border = new TitledBorder(new LineBorder(Color.BLACK), "좌석");
 	JViewport vp = new JViewport();
@@ -49,7 +49,6 @@ public class CusManager extends JFrame {
 
 	public boolean loginFlag = false;
 	public String id = "관리자";
-	
 	private CusManager() {
 		super("고객관리");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -173,6 +172,7 @@ public class CusManager extends JFrame {
 		chatInput.addActionListener(listener);
 		previousBtn.addActionListener(listener);
 		logoutBtn.addActionListener(listener);
+		chatSubmit.addActionListener(listener);
 		for (int i = 0; i < 12; i++) {
 			SP.seatBtn[i].addActionListener(listener);
 		}
