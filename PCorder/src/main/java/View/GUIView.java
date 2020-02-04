@@ -83,11 +83,15 @@ public class GUIView extends JFrame {
 	String upin[] = { "아이디: ", "로그인 시간", "포인트: " };
 	public JButton btn[] = new JButton[5];
 	public JLabel la[] = new JLabel[3];
-	public JTextField msgInput = new JTextField();
 	public String id;
 	public String pointLabel;
 	public String seat = "";
+	
+	JPanel msgPanel = new JPanel();
+	public JTextField msgInput = new JTextField();
+	public JButton chatSubmit = new JButton("send");
 
+	
 	private static String getTagValue(String tag, Element eElement) {
 		NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
 		Node nValue = (Node) nlList.item(0);
@@ -262,7 +266,15 @@ public class GUIView extends JFrame {
 		cha.setHorizontalAlignment(JLabel.CENTER);
 		ep4.add(cha, BorderLayout.NORTH);
 		ep4.add(ta2, BorderLayout.CENTER);
-		ep4.add(msgInput, BorderLayout.SOUTH);
+
+		/*채팅 보내는 textfield 부분과 JButton 부분을 JPanel 위에 올림.*/
+		msgPanel.setLayout(new BorderLayout());
+		msgPanel.add(BorderLayout.CENTER, msgInput);
+		chatSubmit.setBackground(Color.black);
+		chatSubmit.setFont(new Font("고딕체", Font.PLAIN, 10));
+		chatSubmit.setForeground(Color.WHITE);
+		msgPanel.add(BorderLayout.EAST, chatSubmit);
+		ep4.add(msgPanel, BorderLayout.SOUTH);
 
 		if (toggle == true)
 			ep4.setBorder(new TitledBorder(new LineBorder(Color.BLACK)));
@@ -289,6 +301,7 @@ public class GUIView extends JFrame {
 	public void addButtonActionListener(ActionListener listener) {
 		LogOutbtn.addActionListener(listener);
 		msgInput.addActionListener(listener);
+		chatSubmit.addActionListener(listener);
 		for(int i=0;i<5;i++)
 			btn[i].addActionListener(listener);
 		sumb.addActionListener(listener);

@@ -321,7 +321,7 @@ public class PCController implements Runnable {
                }
                status = false;
                System.exit(0);
-            } else if (obj == GUI.msgInput) {
+            } else if (obj == GUI.msgInput || obj == GUI.chatSubmit) {
                outMsg.println(gson.toJson(new Message(GUI.seat, GUI.id, "", GUI.msgInput.getText(), "sendtoadmin", "admins")));
                GUI.msgInput.setText("");
                ///////////////////////////////////

@@ -80,15 +80,6 @@ public class CusManager extends JFrame {
 		super.setResizable(false);
 
 		setVisible(false);
-//		chatInput.addActionListener(new ActionListener() {
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				chatInput.getText();
-//				chatContent.setText(chatContent.getText() + chatInput.getText() + "\n");
-//				chatInput.setText("");
-//			}
-//		});
 	}
 
 	public static CusManager getInstance() {
@@ -163,9 +154,6 @@ public class CusManager extends JFrame {
 		public void setSeat(String seat) {
 			this.seat = seat;
 		}
-//	      public String toString() {
-//	         return this.id+"\t"+this.name+"\t\t\t"+this.price+"\t"+this.manufacture;
-//	      }
 	}
 
 	public void addButtonActionListener(ActionListener listener) {
