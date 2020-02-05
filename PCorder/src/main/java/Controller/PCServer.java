@@ -96,6 +96,7 @@ public class PCServer {
                msg = inMsg.readLine();
                m = gson.fromJson(msg, Message.class);
                System.out.println(msg);
+               System.out.println("전체 쓰레드:");
                all();
                if (m.getType().equals("logout")) {
                  /*로그아웃한 클라이언트의 스레드를 지우고 좌석정보를 메시지로 보냅니다.*/
@@ -129,16 +130,11 @@ public class PCServer {
                   status = false;
                } else if (m.getType().equals("ModeAll")) {
                  /*관리자가 전체 메세지 모드일때 사용자 모두에게 메세지를 보내는 메소드를 호출합니다.*/
-            	   System.out.println("ModeAll::");
-            	   all();
                   msgSendAll(msg);
                } else if (m.getType().equals("ModeSelect")) {
                  /*관리자가 지정한 사용자에게 메세지를 보내기 위한 메소드를 호출합니다.*/
-            	   System.out.println("ModeSelect::" + m.getReceiveId());
-            	   all();
                   msgSendToCustomer(msg);
                } else if (m.getType().equals("orderSendServer")){
-            	   all();
                   /*주문 정보를 최신화하여 좌석 정보창에 뿌려주기 위해 DB에 있는 주문 정보를 가져와 주문 정보를 메시지로 보냅니다.*/
                    o_dao.getInstance().ORDERS_FUNC_2();
                String str = "";
@@ -150,9 +146,17 @@ public class PCServer {
                orderSend(gson.toJson(new Message(m.getSeat(), m.getId(), "",m.getMsg(), "fromServer_order", gson.toJson(str)))); //주문 정보를 관리자 채팅창에 띄워주기 위해 메시지를 보냅니다.
             } else if (m.getType().equals("orderListRemove")) {
             	orderListCustomer(gson.toJson(new Message(m.getSeat(), m.getId(), "", m.getMsg(), "orderList_remove", "")));
-            	all();
-            }else {
-
+            } else if(m.getType().equals("commend_clientLogout")) {
+            	/*로그아웃한 클라이언트의 스레드를 지우고 좌석정보를 메시지로 보냅니다.*/
+            	logoutCustomer(gson.toJson(new Message("","","","","findCustomerThread","")));
+            } else if(m.getType().equals("complete_commend_clientLogout")) {
+            	/*로그아웃한 클라이언트의 스레드를 지우고 좌석정보를 메시지로 보냅니다.*/
+                chatThreads.remove(this);
+                seatNum[Integer.parseInt(m.getSeat())-1] = 0; // 로그아웃한 좌석을 0으로 초기화하여 빈자리 상태로 만들기 위함입니다.
+                msgSendToAdmin(gson.toJson(new Message(m.getSeat(), m.getId(), "", "님의 PC를 종료 하였습니다.", "user_logout", gson.toJson(seatNum))));
+                status = false;
+            }
+            else {
             }
             }
          } catch (Exception e) {
@@ -164,13 +168,18 @@ public class PCServer {
          }
       }
       void all() {
-          /*음식 서비스를 고객에게 가져다 주면 메세지를 띄웁니다.*/
+          /*전체 쓰레드 정보를 가져옵니다.*/
           for (ChatThread ct : chatThreads) {
-//             if (ct.m.getId().equals(m.getId())) {
-//                ct.outMsg.println(msg);
-//             }
-        	  
         	  System.out.println("쓰레드:" + ct.msg);
+          }
+        }
+      void logoutCustomer(String msg) {
+          /*관리자 창에서 로그아웃 시킬 고객의 쓰레드를 찾습니다.*/
+    	  String splitID[] = m.getReceiveId().split(":");
+          for (ChatThread ct : chatThreads) {
+             if (ct.m.getId().equals(splitID[1])) {
+            	ct.outMsg.println(msg);
+             }
           }
         }
       void orderListCustomer(String msg) {

@@ -99,7 +99,7 @@ public class CusManager extends JFrame {
 				add(backPanel[i] = new JPanel());
 				backPanel[i].setPreferredSize(new Dimension((int) (100), (int) (127)));
 				backPanel[i].setOpaque(false);
-				backPanel[i].add(jscroll[i] = new JScrollPane(seatTextArea[i] = new JTextArea(" 빈 자 리\n", 9, 10)));
+				backPanel[i].add(jscroll[i] = new JScrollPane(seatTextArea[i] = new JTextArea("빈 자 리\n", 9, 10)));
 				jscroll[i].getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
 				jscroll[i].getHorizontalScrollBar().setPreferredSize(new Dimension(0, 0));
 

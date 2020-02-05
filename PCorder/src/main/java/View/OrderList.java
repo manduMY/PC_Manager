@@ -65,6 +65,7 @@ public class OrderList extends JFrame {
 		setVisible(false);
 	}
 	public void addButtonActionListener(ActionListener listener) {
+		logoutBtn.addActionListener(listener);
 		serviceBtn.addActionListener(listener);
 		closeBtn.addActionListener(listener);
 	}

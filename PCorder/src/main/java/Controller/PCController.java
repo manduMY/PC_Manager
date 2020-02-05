@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
@@ -261,18 +262,33 @@ public class PCController implements Runnable {
           @Override
           public void actionPerformed(ActionEvent e) {
              Object obj = e.getSource();
-             if (obj == OL.serviceBtn) {
+             if(obj == OL.logoutBtn) {
+            	 /*특정 클라이언트 좌석을 클릭하여 orderList 창에서 해당 클라이언트를 로그아웃 시킨다.*/
+            	 if(CM.SP.seatTextArea[OL.selectSeat].getText().equals("빈 자 리\n")) {
+            		 /*좌석이 빈자리일시 예외 처리*/
+            		 JOptionPane.showMessageDialog(null, "자리가 없어서 로그아웃 시킬 수 없습니다.", "ERROR", JOptionPane.ERROR_MESSAGE);
+            	 } else {
+            		 /*로그아웃 시키기 버튼을 누르면 Server에서 로그아웃시킬 해당 클라이언트를 찾아 해당 클라이언트의 PCController에게 알려준 후 
+            		 PCController에서 데이터베이스 로그아웃 업데이트하고 소켓과 스레드를 종료시키고 해당 클라이언트의 창을 종료한 후 Server에 다시 로그아웃하라고 알려준 후
+            		 server의 쓰레드 arrayList에서 해당 클라이언트의 스레드를 지운다.*/
+            		 String splitID[] = OL.orderID.getText().split(":");
+            		 outMsg.println(gson.toJson(new Message("카운터", "관리자", "", "", "commend_clientLogout", splitID[0] + ":" + splitID[1])));
+            		 CM.SP.seatTextArea[Integer.parseInt(splitID[0])-1].setText("빈 자 리\n");
+            		 OL.orderList_ta.setText("");
+            	 }
+            	 OL.setVisible(false);
+             } else if (obj == OL.serviceBtn) {
             	 String productCnt[] = CM.SP.seatTextArea[OL.selectSeat].getText().split("\n");
             	 CM.SP.seatTextArea[OL.selectSeat].setText(OL.orderID.getText() + "\n");
             	 String splitID[] = OL.orderID.getText().split(":");
             	 if(productCnt.length > 1) { // 만약 빈 자 리 상태에서 split으로 쪼개면 length는 1이므로 length가 2이상일 때 주문 목록이 있어야하니 이런식으로 예외처리를 해준다.
             		 o_dao.getInstance().ORDERS_LIST_DELETE(splitID[1]);
-//            		 outMsg.println(gson.toJson(new Message(splitID[0], splitID[1], "", "", "completionServiceServer", "")));
             		 outMsg.println(gson.toJson(new Message("카운터", "관리자", "", "고객님께 음식을 전달 하였습니다.", "orderListRemove", splitID[0] + ":" + splitID[1])));
             	 }
              	 OL.setVisible(false);
              } else if (obj == OL.closeBtn) {
                  OL.setVisible(false);
+                 
              }
           }
        });
@@ -466,6 +482,26 @@ public class PCController implements Runnable {
                /*서비스가 완료되면 고객 관리창의 주문목록을 초기화 합니다.*/
             	order_list.clear();
             }
+            if(m_temp.getType().equals("findCustomerThread"))
+            {
+            	/*PCServer에서 해당 클라이언트의 쓰레드를 찾은 상태이며 해당 클라이언트의 메세지를 
+            	logout으로 수정하여 PCServer에 다시 알려준다.*/
+            	GUI.ta2.setText("");
+            	GUI.msgInput.setText("");
+                c_dao.getInstance().make_check(m.getId());
+                
+                outMsg.println(gson.toJson(new Message(GUI.seat, GUI.id, "", "", "complete_commend_clientLogout", "")));
+                /*로그아웃 시킬 해당 클라이언트의 소켓과 쓰레드를 모두 정상 종료 시켜야 한다.*/
+            	try {
+                    outMsg.close();
+                    inMsg.close();
+                    socket.close();
+                 } catch (IOException ex) {
+                    ex.printStackTrace();
+                 }
+                 status = false;
+                 System.exit(0);
+            }
             if(m.getSeat() == "0" && GUI.seat == "") {
                /*사용자가 들어갈 좌석에 사용자가 없거나 맨 처음 사용자가 들어오는 상태이면 좌석 정보를 채워 놓습니다.*/
                /*나중에 사용자 좌석 정보를 사용자 로그인시와 로그아웃시 이용하기 위함입니다.*/
@@ -492,5 +528,4 @@ public class PCController implements Runnable {
       }
       logger.info("[MultiChatUI]" + thread.getName() + " 메시지 수신 스레드 종료됨!!");
    } // run()
-
 }
