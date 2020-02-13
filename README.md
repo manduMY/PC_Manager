@@ -1,3 +1,7 @@
-# PC_Manager
-학교에서 학기중에 완성한 팀프로젝트를 업그레이드 시키기 위한 저장소 입니다.
-ggg
+Java PC_Manager Application
+===
+
+<a href="https://myengineering.tistory.com/"><img src="https://img.shields.io/badge/blog-myengineering-red.svg" /></a>
+<a href="#"><img src="https://img.shields.io/github/last-commit/manduMY/PC_Manager.svg?style=flat" /></a>
+<a href="#"><img src="https://img.shields.io/github/languages/top/manduMY/PC_Manager.svg?colorB=yellow&style=flat" /></a>
+<a href="#"><img src="https://img.shields.io/badge/license-MIT-green.svg" /></a>
