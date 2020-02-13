@@ -42,6 +42,6 @@ PC 관리 프로젝트
 |:----------------------------------------:|
 |<img src="markdown/img/ProductManager.gif" width=1000 />|
 
-| 사용자 로그아웃 |
+| 사용자 로그아웃 or 사용자 로그아웃 시키기 |
 |:----------------------------------------:|
 |<img src="markdown/img/ClientLogout.gif" width=1000 />|
