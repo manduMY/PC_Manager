@@ -12,8 +12,18 @@ MySQL - WorkBench 설정하기
 <br/>
 
 # 스키마 설정
-
+- pc_order_db가 스키마 입니다.
+<img src="../img/MySQL3.png" width=500>
 <br/>
 <br/>
 
 # 테이블 설정
+- customers table
+<img src="../img/MySQL4.png" width=200>
+<img src="../img/MySQL5.png" width=200>
+
+- orders table
+<img src="../img/MySQL6.png" width=200>
+
+- products table
+<img src="../img/MySQL7.png" width=200>
