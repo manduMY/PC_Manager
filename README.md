@@ -24,4 +24,4 @@ PC 관리 프로젝트
 
 | Chat View | Chat View |
 |:----------------------------------------:|:-----------------------------------------:|
-|<img src="markdown/img/chatting.gif" width=300 />|<img src="markdown/img/chatting.gif" width=300 />|
+|<img src="markdown/img/chatting.gif" width=500 />|<img src="markdown/img/chatting.gif" width=500 />|
