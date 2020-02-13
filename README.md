@@ -9,7 +9,6 @@ Java PC_Manager Application
 PC 관리 프로젝트
 
 - 핵심 목표: 학교에서 했던 프로젝트를 완벽한 프로그램으로 만들자!!
-- 제작 기간: 진행중..
 - Keyword: MVC, Thread, Socket, GSON, Singleton, Weather API(Open API), DOM(parser), MySQL, JSON, Maven, Server-Client
 
 기존 프로젝트에서 추가된 기능: 고객 관리창의 좌석 선택하는 이벤트 추가, 주문 받은 리스트 처리 기능 추가, 관리자에서 1:1 채팅을 보낼때 체크하는 콤보박스 에러 해결과 기타 잡버그 수정, 관리자가 Client를 로그아웃 시키는 기능 추가.
