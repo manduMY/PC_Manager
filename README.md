@@ -22,6 +22,6 @@ PC 관리 프로젝트
 ---
 개발 환경이 윈도우이기 때문에 윈도우 운영체제에서 실행 하였습니다.
 
-| Chat View | Chat View |
-|:----------------------------------------:|:-----------------------------------------:|
-|<img src="markdown/img/chatting.gif" width=500 />|<img src="markdown/img/chatting.gif" width=500 />|
+| Chat View |
+|:----------------------------------------:|
+|<img src="markdown/img/chatting.gif" width=1000 />|
