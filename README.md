@@ -1,4 +1,4 @@
-Java PC_Manager Application
+Java PC_Manager Program
 ===
 
 <a href="https://myengineering.tistory.com/"><img src="https://img.shields.io/badge/blog-myengineering-red.svg" /></a>
