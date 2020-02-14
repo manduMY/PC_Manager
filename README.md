@@ -125,7 +125,7 @@ Commit 로그에 기능 구현 코드와 문제점을 가능한 자세히 적었
   - DataBase의 root 계정이나 사용하고자 하는 계정의 id와 비밀번호를 틀리지 않게 확인해야 합니다.(PCorder\src\main\java\Model\DAO_Interface.java에서 꼭 확인!!)
   - 인코딩 UTF-8 입니다.
   - 메이븐으로 프로젝트 생성했기 때문에 라이브러리 따로 Import 시킬 필요 없습니다.
-  * * *
+***
 ### Q. 메이븐 라이브러리가 제대로 가져오지 못 할 경우
 
 /사용자/.m2/repository 안에 모든 폴더를 삭제 (repository 폴더 자체를 삭제 X)
