@@ -4,20 +4,20 @@ MySQL - WorkBench 설정하기
 
 <br/>
 
-# 초기 설정
+# 1. 데이터베이스를 만든다.
 <img src="../img/MySQL1.png" width=200>
 <img src="../img/MySQL2.png" width=200>
 
 <br/>
 <br/>
 
-# 스키마 설정
+# 2. 스키마를 만든다.
 - pc_order_db가 스키마 입니다.
 <img src="../img/MySQL3.png" width=500>
 <br/>
 <br/>
 
-# 테이블 설정
+# 3. 테이블을 생성한다.
 - customers table
 <img src="../img/MySQL4.png" width=500>
 <img src="../img/MySQL5.png" width=500>
