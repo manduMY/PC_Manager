@@ -132,7 +132,7 @@ Commit 로그에 기능 구현 코드와 문제점을 가능한 자세히 적었
 
 이클립스 실행 -> 프로젝트 우클릭 -> maven\Update Proj 클릭.
 
-※ 프로그램 실행 순서 ※ 
+### ※ 프로그램 실행 순서 ※ 
   
 -> Controller\PCServer.java
 
