@@ -55,7 +55,7 @@ PC 관리 프로젝트
 
 개발 중점 사항
 ---
-<img src="markdown/img/Development_Focus.png" width=800 >
+<img src="markdown/img/Development_Focus.png" width=1000 >
 
 <br/>
 
@@ -77,7 +77,7 @@ Commit 로그에 기능 구현 코드와 문제점을 가능한 자세히 적었
 
 한눈에 보는 전체 시스템 구조도
 ---
-<img src="markdown/img/Overall_System_Structure.png" width=800 >
+<img src="markdown/img/Overall_System_Structure.png" width=1000 >
 
 <hr/>
 
