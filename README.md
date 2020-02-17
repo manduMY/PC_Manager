@@ -49,7 +49,7 @@ PC 관리 프로젝트
 
 주요 기술 요소
 ---
-<img src="markdown/img/Main_technical_element.png" width=800 >
+<img src="markdown/img/Main_technical_element.png" width=1000 >
 
 <br/>
 
